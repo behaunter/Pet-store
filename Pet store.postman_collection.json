@@ -1,0 +1,728 @@
+{
+	"info": {
+		"_postman_id": "42e62f48-4441-47e4-8809-59aaa5b4da8d",
+		"name": "Pet store",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21613684",
+		"_collection_link": "https://gold-water-612908.postman.co/workspace/14060323~43a5d13a-1588-4892-855e-71b9b6252ff4/collection/21613684-42e62f48-4441-47e4-8809-59aaa5b4da8d?action=share&source=collection_link&creator=21613684"
+	},
+	"item": [
+		{
+			"name": "create new pet",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Pet id equals generated value\", function () {\r",
+							"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"PET_ID\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Category id equals generated value\", function () {\r",
+							"    pm.expect(jsonData.category.id).to.eql(pm.environment.get(\"CATEGORY_ID\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Tags id equals generated value\", function () {\r",
+							"    pm.expect(jsonData.tags[0].id).to.eql(pm.environment.get(\"TAGS_ID\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Category name equals generated value\", function () {\r",
+							"    pm.expect(jsonData.category.name).to.eql(pm.environment.get(\"CATEGORY_NAME\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Pet name equals generated value\", function () {\r",
+							"    pm.expect(jsonData.name).to.eql(pm.environment.get(\"PET_NAME\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Photo URL equals generated value\", function () {\r",
+							"    pm.expect(jsonData.photoUrls[0]).to.eql(pm.environment.get(\"PHOTO_URL\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Tags name equals generated value\", function () {\r",
+							"    pm.expect(jsonData.tags[0].name).to.eql(pm.environment.get(\"TAGS_NAME\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status equals generated value\", function () {\r",
+							"    pm.expect(jsonData.status).to.eql(pm.environment.get(\"STATUS\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Schema is valid\", function () {\r",
+							"  var schema = {\r",
+							"    type: \"object\",\r",
+							"    properties: {\r",
+							"      id: { type: \"number\" },\r",
+							"      category: {\r",
+							"        type: \"object\",\r",
+							"        properties: {\r",
+							"          id: { type: \"number\" },\r",
+							"          name: { type: \"string\" }\r",
+							"        },\r",
+							"        required: [\"id\", \"name\"]\r",
+							"      },\r",
+							"      name: { type: \"string\" },\r",
+							"      photoUrls: {\r",
+							"        type: \"array\",\r",
+							"        items: { type: \"string\" }\r",
+							"      },\r",
+							"      tags: {\r",
+							"        type: \"array\",\r",
+							"        items: {\r",
+							"          type: \"object\",\r",
+							"          properties: {\r",
+							"            id: { type: \"number\" },\r",
+							"            name: { type: \"string\" }\r",
+							"          },\r",
+							"          required: [\"id\", \"name\"]\r",
+							"        }\r",
+							"      },\r",
+							"      status: { type: \"string\" }\r",
+							"    },\r",
+							"    required: [\"id\", \"category\", \"name\", \"photoUrls\", \"tags\", \"status\"]\r",
+							"  };\r",
+							"\r",
+							"  var response = pm.response.json();\r",
+							"  pm.expect(tv4.validate(response, schema)).to.be.true;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var pet_id = pm.variables.replaceIn('{{$randomInt}}')\r",
+							"pm.environment.set(\"PET_ID\", parseInt(pet_id));\r",
+							"\r",
+							"var category_id = pm.variables.replaceIn('{{$randomInt}}')\r",
+							"pm.environment.set(\"CATEGORY_ID\", parseInt(category_id));\r",
+							"\r",
+							"var pet_name = pm.variables.replaceIn('{{$randomFullName}}')\r",
+							"pm.environment.set(\"PET_NAME\", pet_name);\r",
+							"\r",
+							"var photo_url = pm.variables.replaceIn('{{$randomImageUrl}}')\r",
+							"pm.environment.set(\"PHOTO_URL\", photo_url);\r",
+							"\r",
+							"var category_name = pm.variables.replaceIn('{{$randomDepartment}}')\r",
+							"pm.environment.set(\"CATEGORY_NAME\", category_name);\r",
+							"\r",
+							"var tags_id = pm.variables.replaceIn('{{$randomInt}}')\r",
+							"pm.environment.set(\"TAGS_ID\", parseInt(tags_id));\r",
+							"\r",
+							"var tags_name = pm.variables.replaceIn('{{$randomProduct}}')\r",
+							"pm.environment.set(\"TAGS_NAME\", tags_name);\r",
+							"\r",
+							"// Function to generate a random status from the available options\r",
+							"function getRandomStatus() {\r",
+							"    var statuses = ['available', 'pending', 'sold'];\r",
+							"    return statuses[Math.floor(Math.random() * statuses.length)];\r",
+							"}\r",
+							"\r",
+							"var status = getRandomStatus();\r",
+							"pm.environment.set(\"STATUS\", status);\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": {{PET_ID}},\r\n  \"category\": {\r\n    \"id\": {{CATEGORY_ID}},\r\n    \"name\": \"{{CATEGORY_NAME}}\"\r\n  },\r\n  \"name\": \"{{PET_NAME}}\",\r\n  \"photoUrls\": [\r\n    \"{{PHOTO_URL}}\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": {{TAGS_ID}},\r\n      \"name\": \"{{TAGS_NAME}}\"\r\n    }\r\n  ],\r\n\"status\": \"{{STATUS}}\" \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://petstore.swagger.io/v2/pet",
+					"protocol": "https",
+					"host": [
+						"petstore",
+						"swagger",
+						"io"
+					],
+					"path": [
+						"v2",
+						"pet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get created pet by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Pet id equals generated value\", function () {\r",
+							"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"PET_ID\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Category id equals generated value\", function () {\r",
+							"    pm.expect(jsonData.category.id).to.eql(pm.environment.get(\"CATEGORY_ID\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Tags id equals generated value\", function () {\r",
+							"    pm.expect(jsonData.tags[0].id).to.eql(pm.environment.get(\"TAGS_ID\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Category name equals generated value\", function () {\r",
+							"    pm.expect(jsonData.category.name).to.eql(pm.environment.get(\"CATEGORY_NAME\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Pet name equals generated value\", function () {\r",
+							"    pm.expect(jsonData.name).to.eql(pm.environment.get(\"PET_NAME\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Photo URL equals generated value\", function () {\r",
+							"    pm.expect(jsonData.photoUrls[0]).to.eql(pm.environment.get(\"PHOTO_URL\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Tags name equals generated value\", function () {\r",
+							"    pm.expect(jsonData.tags[0].name).to.eql(pm.environment.get(\"TAGS_NAME\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status equals generated value\", function () {\r",
+							"    pm.expect(jsonData.status).to.eql(pm.environment.get(\"STATUS\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Schema is valid\", function () {\r",
+							"  var schema = {\r",
+							"    type: \"object\",\r",
+							"    properties: {\r",
+							"      id: { type: \"number\" },\r",
+							"      category: {\r",
+							"        type: \"object\",\r",
+							"        properties: {\r",
+							"          id: { type: \"number\" },\r",
+							"          name: { type: \"string\" }\r",
+							"        },\r",
+							"        required: [\"id\", \"name\"]\r",
+							"      },\r",
+							"      name: { type: \"string\" },\r",
+							"      photoUrls: {\r",
+							"        type: \"array\",\r",
+							"        items: { type: \"string\" }\r",
+							"      },\r",
+							"      tags: {\r",
+							"        type: \"array\",\r",
+							"        items: {\r",
+							"          type: \"object\",\r",
+							"          properties: {\r",
+							"            id: { type: \"number\" },\r",
+							"            name: { type: \"string\" }\r",
+							"          },\r",
+							"          required: [\"id\", \"name\"]\r",
+							"        }\r",
+							"      },\r",
+							"      status: { type: \"string\" }\r",
+							"    },\r",
+							"    required: [\"id\", \"category\", \"name\", \"photoUrls\", \"tags\", \"status\"]\r",
+							"  };\r",
+							"\r",
+							"  var response = pm.response.json();\r",
+							"  pm.expect(tv4.validate(response, schema)).to.be.true;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://petstore.swagger.io/v2/pet/{{PET_ID}}",
+					"protocol": "https",
+					"host": [
+						"petstore",
+						"swagger",
+						"io"
+					],
+					"path": [
+						"v2",
+						"pet",
+						"{{PET_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update existing pet",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"\r",
+							"var category_id = pm.variables.replaceIn('{{$randomInt}}')\r",
+							"pm.environment.set(\"CATEGORY_ID\", parseInt(category_id));\r",
+							"\r",
+							"var pet_name = pm.variables.replaceIn('{{$randomFullName}}')\r",
+							"pm.environment.set(\"PET_NAME\", pet_name);\r",
+							"\r",
+							"var photo_url = pm.variables.replaceIn('{{$randomImageUrl}}')\r",
+							"pm.environment.set(\"PHOTO_URL\", photo_url);\r",
+							"\r",
+							"var category_name = pm.variables.replaceIn('{{$randomDepartment}}')\r",
+							"pm.environment.set(\"CATEGORY_NAME\", category_name);\r",
+							"\r",
+							"var tags_id = pm.variables.replaceIn('{{$randomInt}}')\r",
+							"pm.environment.set(\"TAGS_ID\", parseInt(tags_id));\r",
+							"\r",
+							"var tags_name = pm.variables.replaceIn('{{$randomProduct}}')\r",
+							"pm.environment.set(\"TAGS_NAME\", tags_name);\r",
+							"\r",
+							"// Function to generate a random status from the available options\r",
+							"function getRandomStatus() {\r",
+							"    var statuses = ['available', 'pending', 'sold'];\r",
+							"    return statuses[Math.floor(Math.random() * statuses.length)];\r",
+							"}\r",
+							"\r",
+							"var status = getRandomStatus();\r",
+							"pm.environment.set(\"STATUS\", status);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Pet id equals generated value\", function () {\r",
+							"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"PET_ID\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Category id equals generated value\", function () {\r",
+							"    pm.expect(jsonData.category.id).to.eql(pm.environment.get(\"CATEGORY_ID\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Tags id equals generated value\", function () {\r",
+							"    pm.expect(jsonData.tags[0].id).to.eql(pm.environment.get(\"TAGS_ID\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Category name equals generated value\", function () {\r",
+							"    pm.expect(jsonData.category.name).to.eql(pm.environment.get(\"CATEGORY_NAME\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Pet name equals generated value\", function () {\r",
+							"    pm.expect(jsonData.name).to.eql(pm.environment.get(\"PET_NAME\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Photo URL equals generated value\", function () {\r",
+							"    pm.expect(jsonData.photoUrls[0]).to.eql(pm.environment.get(\"PHOTO_URL\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Tags name equals generated value\", function () {\r",
+							"    pm.expect(jsonData.tags[0].name).to.eql(pm.environment.get(\"TAGS_NAME\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status equals generated value\", function () {\r",
+							"    pm.expect(jsonData.status).to.eql(pm.environment.get(\"STATUS\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Schema is valid\", function () {\r",
+							"  var schema = {\r",
+							"    type: \"object\",\r",
+							"    properties: {\r",
+							"      id: { type: \"number\" },\r",
+							"      category: {\r",
+							"        type: \"object\",\r",
+							"        properties: {\r",
+							"          id: { type: \"number\" },\r",
+							"          name: { type: \"string\" }\r",
+							"        },\r",
+							"        required: [\"id\", \"name\"]\r",
+							"      },\r",
+							"      name: { type: \"string\" },\r",
+							"      photoUrls: {\r",
+							"        type: \"array\",\r",
+							"        items: { type: \"string\" }\r",
+							"      },\r",
+							"      tags: {\r",
+							"        type: \"array\",\r",
+							"        items: {\r",
+							"          type: \"object\",\r",
+							"          properties: {\r",
+							"            id: { type: \"number\" },\r",
+							"            name: { type: \"string\" }\r",
+							"          },\r",
+							"          required: [\"id\", \"name\"]\r",
+							"        }\r",
+							"      },\r",
+							"      status: { type: \"string\" }\r",
+							"    },\r",
+							"    required: [\"id\", \"category\", \"name\", \"photoUrls\", \"tags\", \"status\"]\r",
+							"  };\r",
+							"\r",
+							"  var response = pm.response.json();\r",
+							"  pm.expect(tv4.validate(response, schema)).to.be.true;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": {{PET_ID}},\r\n  \"category\": {\r\n    \"id\": {{CATEGORY_ID}},\r\n    \"name\": \"{{CATEGORY_NAME}}\"\r\n  },\r\n  \"name\": \"{{PET_NAME}}\",\r\n  \"photoUrls\": [\r\n    \"{{PHOTO_URL}}\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": {{TAGS_ID}},\r\n      \"name\": \"{{TAGS_NAME}}\"\r\n    }\r\n  ],\r\n\"status\": \"{{STATUS}}\" \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://petstore.swagger.io/v2/pet",
+					"protocol": "https",
+					"host": [
+						"petstore",
+						"swagger",
+						"io"
+					],
+					"path": [
+						"v2",
+						"pet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get updated pet",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Pet id equals generated value\", function () {\r",
+							"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"PET_ID\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Category id equals generated value\", function () {\r",
+							"    pm.expect(jsonData.category.id).to.eql(pm.environment.get(\"CATEGORY_ID\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Tags id equals generated value\", function () {\r",
+							"    pm.expect(jsonData.tags[0].id).to.eql(pm.environment.get(\"TAGS_ID\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Category name equals generated value\", function () {\r",
+							"    pm.expect(jsonData.category.name).to.eql(pm.environment.get(\"CATEGORY_NAME\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Pet name equals generated value\", function () {\r",
+							"    pm.expect(jsonData.name).to.eql(pm.environment.get(\"PET_NAME\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Photo URL equals generated value\", function () {\r",
+							"    pm.expect(jsonData.photoUrls[0]).to.eql(pm.environment.get(\"PHOTO_URL\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Tags name equals generated value\", function () {\r",
+							"    pm.expect(jsonData.tags[0].name).to.eql(pm.environment.get(\"TAGS_NAME\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status equals generated value\", function () {\r",
+							"    pm.expect(jsonData.status).to.eql(pm.environment.get(\"STATUS\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Schema is valid\", function () {\r",
+							"  var schema = {\r",
+							"    type: \"object\",\r",
+							"    properties: {\r",
+							"      id: { type: \"number\" },\r",
+							"      category: {\r",
+							"        type: \"object\",\r",
+							"        properties: {\r",
+							"          id: { type: \"number\" },\r",
+							"          name: { type: \"string\" }\r",
+							"        },\r",
+							"        required: [\"id\", \"name\"]\r",
+							"      },\r",
+							"      name: { type: \"string\" },\r",
+							"      photoUrls: {\r",
+							"        type: \"array\",\r",
+							"        items: { type: \"string\" }\r",
+							"      },\r",
+							"      tags: {\r",
+							"        type: \"array\",\r",
+							"        items: {\r",
+							"          type: \"object\",\r",
+							"          properties: {\r",
+							"            id: { type: \"number\" },\r",
+							"            name: { type: \"string\" }\r",
+							"          },\r",
+							"          required: [\"id\", \"name\"]\r",
+							"        }\r",
+							"      },\r",
+							"      status: { type: \"string\" }\r",
+							"    },\r",
+							"    required: [\"id\", \"category\", \"name\", \"photoUrls\", \"tags\", \"status\"]\r",
+							"  };\r",
+							"\r",
+							"  var response = pm.response.json();\r",
+							"  pm.expect(tv4.validate(response, schema)).to.be.true;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://petstore.swagger.io/v2/pet/{{PET_ID}}",
+					"protocol": "https",
+					"host": [
+						"petstore",
+						"swagger",
+						"io"
+					],
+					"path": [
+						"v2",
+						"pet",
+						"{{PET_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete pet",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Code field is also 200\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Type is unknown\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.type).to.eql(\"unknown\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Message equals deleted petId\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(pm.environment.get(\"PET_ID\").toString())\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body has the correct schema\", function () {\r",
+							"    var schema = {\r",
+							"        type: \"object\",\r",
+							"        properties: {\r",
+							"            code: { type: \"number\" },\r",
+							"            type: { type: \"string\" },\r",
+							"            message: { type: \"string\" }\r",
+							"        },\r",
+							"        required: [\"code\", \"type\", \"message\"]\r",
+							"    };\r",
+							"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://petstore.swagger.io/v2/pet/{{PET_ID}}",
+					"protocol": "https",
+					"host": [
+						"petstore",
+						"swagger",
+						"io"
+					],
+					"path": [
+						"v2",
+						"pet",
+						"{{PET_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "check pet was deleted by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Code field is 1\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.code).to.eql(1);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Type is error\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.type).to.eql(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Message equals Pet not found\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"Pet not found\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body has the correct schema\", function () {\r",
+							"    var schema = {\r",
+							"        type: \"object\",\r",
+							"        properties: {\r",
+							"            code: { type: \"number\" },\r",
+							"            type: { type: \"string\" },\r",
+							"            message: { type: \"string\" }\r",
+							"        },\r",
+							"        required: [\"code\", \"type\", \"message\"]\r",
+							"    };\r",
+							"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.environment.unset(\"PET_ID\");\r",
+							"pm.environment.unset(\"CATEGORY_ID\");\r",
+							"pm.environment.unset(\"variable_key\");\r",
+							"pm.environment.unset(\"PET_NAME\");\r",
+							"pm.environment.unset(\"PHOTO_URL\");\r",
+							"pm.environment.unset(\"CATEGORY_NAME\");\r",
+							"pm.environment.unset(\"TAGS_ID\");\r",
+							"pm.environment.unset(\"TAGS_NAME\");\r",
+							"pm.environment.unset(\"STATUS\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://petstore.swagger.io/v2/pet/{{PET_ID}}",
+					"protocol": "https",
+					"host": [
+						"petstore",
+						"swagger",
+						"io"
+					],
+					"path": [
+						"v2",
+						"pet",
+						"{{PET_ID}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
